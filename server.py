@@ -25,9 +25,10 @@ def main():
     serverSocket.listen(1)
     print("The server is ready to receive")
 
-    while True:
-        connectionSocket, addr = serverSocket.accept()
+    # accepting connection needs to be external to while loop -- otherwise it gets stuck after first request is served
+    connectionSocket, addr = serverSocket.accept()
 
+    while True:
         sentence = connectionSocket.recv(1024).decode()
         capSentence = sentence.upper() + " -signed by server"
         connectionSocket.send(capSentence.encode())
