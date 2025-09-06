@@ -12,3 +12,10 @@ for now placed
 
 # server and client will have access to eachother's identifiers immediately 
 #    server won't have to wait for client to connect before saving their ip/port
+
+
+Currently
+(to quit) client will type "quit" 
+    - triggers client to close connection
+    - sends to server, triggering server to close connection too
+

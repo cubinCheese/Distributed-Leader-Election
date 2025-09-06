@@ -1,5 +1,6 @@
 from socket import *
 from time import sleep
+import uuid
 
 # function to read config.txt for server IP and PORT
 # same function from server.py
@@ -21,6 +22,9 @@ def main():
     print(f"Server IP: {server_ip}, Server Port: {server_port}")
     print(f"Client IP: {client_ip}, Client Port: {client_port}")
 
+    # generate uuid
+    node_uuid = uuid.uuid4().hex
+
     # identify socket to connect to
     clientSocket = socket(AF_INET, SOCK_STREAM)
 
@@ -35,8 +39,9 @@ def main():
         
 
         # send something
-        #sentence = "this message was encoded" 
-        sentence = input("Input lowercase Sentence as message (use): ")
+        ##sentence = "this message was encoded" 
+        #sentence = input("Input lowercase Sentence as message (use): ")
+        sentence = node_uuid
         
         clientSocket.send(sentence.encode())
 
