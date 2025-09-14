@@ -15,14 +15,26 @@ import json
 import logging
 
 # Function to log messages received and sent
+'''
+@param message_type: "Received" or "Sent"
+@param msg: Message object
+@param comparison: "greater", "less", or "" (for leader messages)
+    # message.uuid was greater/less than/equal to local uuid
+@param state: "Not Leader", "Leader Elected", or "" (for leader messages)
+@param leader_id: UUID of the elected leader (for leader messages)
+'''
 def log_message(message_type, msg, comparison, state, leader_id=None):
     if message_type == "Received":
+        print(f"Received: uuid={msg.received_uuid}, flag={msg.flag}, {comparison}, {state}")
         logging.info(f"Received: uuid={msg.received_uuid}, flag={msg.flag}, {comparison}, {state}")
     elif message_type == "Sent":
+        print(f"Sent: uuid={msg.received_uuid}, flag={msg.flag}")
         logging.info(f"Sent: uuid={msg.received_uuid}, flag={msg.flag}")
     elif message_type == "Ignored":
+        print(f"Ignored: uuid={msg.received_uuid}")
         logging.info(f"Ignored: uuid={msg.received_uuid}")
     elif message_type == "Leader":
+        print(f"Leader is decided to {leader_id}")
         logging.info(f"Leader is decided to {leader_id}")
     
 
@@ -103,7 +115,7 @@ class NodeState:
         while True:
             # accept connection until leader is elected
             connectionSocket, addr = serverSocket.accept() 
-            print("I just connected to: ", addr, connectionSocket)
+            #print("I just connected to: ", addr, connectionSocket)
 
             while True:
                 # receive message from incoming connection
@@ -117,10 +129,12 @@ class NodeState:
                     if msg_str:
                         message = Message.json_to_msg(data=msg_str)
                         
+                        '''
                         print("Received:", message.received_uuid, type(message.received_uuid))
                         print("Local:", self.local_node_uuid, type(self.local_node_uuid))
                         print("Equal?", message.received_uuid == self.local_node_uuid)
                         print("Flag:", message.flag, type(message.flag))
+                        '''
 
                         self.leader_election_logic(message) # leader election logic
             connectionSocket.close()
@@ -131,21 +145,23 @@ class NodeState:
         if message.flag == 0:
             if message.received_uuid == self.local_node_uuid:
                 # None -> leader uuid initalized
-                print(f"Modifying message to our uuid: {self.local_node_uuid}, with leader: 1")
+                log_message("Leader", message, "equal", "", self.local_node_uuid)
                 self.leader_uuid = self.local_node_uuid # we are the leader
                 self.leader_flag = True
                 self.send_node_message(Message(message.received_uuid, flag=1))     # send updated message
 
             # case: our node uuid < received uuid
             # just pass message along (we're not the leader)
-            elif message.received_uuid > self.local_node_uuid:
-                print(f"(unmodified) Forwarding message along: {message.received_uuid}, with leader: {message.flag}")
+            elif self.local_node_uuid < message.received_uuid:
+                #print(f"(unmodified) Forwarding message along: {message.received_uuid}, with leader: {message.flag}")
+                log_message("Received", message, "greater", "Not Leader")
                 self.send_node_message(message)     # send unmodified message
 
             # case: our node uuid > received uuid
             # we are a better candidate for leader, modify message
-            else: # message.received_uuid < sharedState.local_node_uuid:
-                print(f"Modifying message to our uuid: {self.local_node_uuid}, with leader: 0")
+            else: # message.received_uuid < self.local_node_uuid:
+                #print(f"Modifying message to our uuid: {self.local_node_uuid}, with leader: 0")
+                log_message("Received", message, "less", "Not Leader")
                 self.leader_flag = False
                 self.send_node_message(Message(received_uuid=self.local_node_uuid, flag=0))     # send updated message
 
@@ -154,10 +170,12 @@ class NodeState:
             if message.received_uuid == self.local_node_uuid:
                 self.leader_flag = True
                 self.leader_uuid = message.received_uuid
-                print("Leader elected:", self.leader_uuid, "flag: ", message.flag)
+                #print("Leader elected:", self.leader_uuid, "flag: ", message.flag)
+                log_message("Leader", message, "", "", self.leader_uuid)
                 return  # election complete, stop forwarding
             else:
-                print(f"Forwarding leader message along: {message.received_uuid}, with leader: {message.flag}")
+                #print(f"Forwarding leader message along: {message.received_uuid}, with leader: {message.flag}")
+                log_message("Received", message, "", "Leader Elected")
                 self.send_node_message(message)     # send unmodified message
     
 
@@ -192,12 +210,14 @@ class NodeState:
         # call helper function to send message
         self.send_node_message(message)
 
+        # log first message sent
+        log_message("Sent", message, "", "")
+
     # Initalize first message in chain of election process (start of node chain)
     # Send subsequent messages in chain of election process
     def send_node_message(self, message: Message):
         try:
             self.clientSocket.sendall(message.msg_to_json().encode()) # sendall is more reliable
-            log_message("Sent", message.received_uuid, ", with flag: ", message.flag)
         except Exception as e:
             log_message("ClientSocket send error:", message, "", "", e)
     
