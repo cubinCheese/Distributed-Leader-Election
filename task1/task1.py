@@ -38,21 +38,20 @@ def log_message(message_type, msg, comparison, state, leader_id=None):
         logging.info(f"Leader is decided to {leader_id}")
     
 
+# message class to hold incoming message data
 class Message:
 
     # message thread is initalized with ID
     def __init__(self, received_uuid=None, flag=0):
         super().__init__()
         self.received_uuid = received_uuid # received from sender (client)
-        self.flag = flag # flag to indicate if leader elected
+        self.flag          = flag          # flag to indicate if leader elected
 
-    # json format
+    # function that converts message object -> json string
     def msg_to_json(self):
         return json.dumps({'received_uuid': str(self.received_uuid), 'flag': self.flag}) + "\n"
-
-        #return json.dumps({'received_uuid': str(self.received_uuid), 'flag': self.flag}) + "\n"
     
-    # json -> object
+    # function that converts json string -> message object
     @staticmethod
     def json_to_msg(data):
         msgDict = json.loads(data)
@@ -61,12 +60,7 @@ class Message:
         return Message(received_uuid, msgDict['flag'])
 
 
-'''    def run(self):
-        print(f"Message from {self.received_uuid} \n")
-        time.sleep(5)'''
-
-
-# function to read config.txt for server IP and PORT
+# function to read config.txt to retrieve (server & client) IP and PORT numbers
 def read_config_file():
     with open("config.txt", "r") as file:
         lines = file.readlines()
@@ -80,22 +74,21 @@ def read_config_file():
         return server_ip, int(server_port), client_ip, int(client_port)
 
 
-# shared state class for client & server thread
-# i.e. shared data like: uuid
+# Shared state class for client & server thread
+# Note. client is the initiator of the election process (first transmission) (transmitter)
+#       server is the receiver of the election process (first reception) (receiver & subseq comms transmitter)
+#       
 class NodeState:
     def __init__(self):
-        self.local_node_uuid = uuid.uuid4() # generate uuid for this node
-        self.leader_uuid = None   
-        self.leader_flag = False # election flag
+        self.local_node_uuid = uuid.uuid4() # generate uuid for current process node
+        self.leader_uuid = None             # elected leader uuid
+        self.leader_flag = False            # election flag
 
-        self.clientSocket = None  # client socket needs to be accessible to both functions since
         # client needs to make first connection
         # server needs to send subsequent messages to that socket
+        self.clientSocket = None  # client socket needs to be accessible to both functions since
 
-
-        # variable is shared between both transmitter/receiver
         #self.current_message = None  # initalize message variable to hold message object (of Message class)
-        #self.server_ready_event = threading.Event()  # Event to signal when server is ready
 
     # the receiver
     # server() takes server_port, and sharedState object (data class)
@@ -104,13 +97,9 @@ class NodeState:
 
         serverSocket = socket(AF_INET, SOCK_STREAM)
         serverSocket.bind((server_ip, server_port))  # port server is using
-        serverSocket.listen(1)                # server is listening
+        serverSocket.listen(1)                       # server is listening
 
         print("The server is ready to receive")
-
-        # accepting connection needs to be external to while loop -- otherwise it gets stuck after first request is served
-        # "if someone connects to the port im listening on, ill accept"
-        
 
         while True:
             # accept connection until leader is elected
@@ -124,7 +113,6 @@ class NodeState:
                     continue  # no empty strings
 
                 # convert to message object - split by newline to handle stream of messages
-                #message = Message.json_to_msg(data=sentence)
                 for msg_str in sentence.strip().split('\n'):
                     if msg_str:
                         message = Message.json_to_msg(data=msg_str)
@@ -136,9 +124,11 @@ class NodeState:
                         print("Flag:", message.flag, type(message.flag))
                         '''
 
-                        self.leader_election_logic(message) # leader election logic
+                        self.leader_election_logic(message) # call leader election process
             connectionSocket.close()
 
+    # function that handles the leader election logic
+    # based on the message received, it decides whether to forward, modify, or stop forwarding
     def leader_election_logic(self, message: Message):
 
         # case: we are the leader - UUID has returned back to us
@@ -213,6 +203,7 @@ class NodeState:
         # log first message sent
         log_message("Sent", message, "", "")
 
+    # Helper function to send messages
     # Initalize first message in chain of election process (start of node chain)
     # Send subsequent messages in chain of election process
     def send_node_message(self, message: Message):
