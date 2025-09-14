@@ -110,7 +110,7 @@ class NodeState:
                 # receive message from incoming connection
                 sentence = connectionSocket.recv(1024).decode()
                 if not sentence:
-                    continue  # no empty strings
+                    break  # no empty strings
 
                 # convert to message object - split by newline to handle stream of messages
                 for msg_str in sentence.strip().split('\n'):
