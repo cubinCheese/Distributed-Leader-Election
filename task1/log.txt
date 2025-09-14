@@ -1,20 +1,3 @@
-Server listening on ('127.0.0.1', 5001)
-Server listening on ('127.0.0.1', 5002)
-Connected to ('127.0.0.1', 5002)
-Connection accepted
-Received: uuid=2c4c0e45-9e73-4561-9fd4-d5daa7e1cd9c, flag=0, less, 0
-Sent: uuid=2c4c0e45-9e73-4561-9fd4-d5daa7e1cd9c, flag=0
-Send error: 'NoneType' object has no attribute 'sendall'
-Connected to ('127.0.0.1', 5001)
-Connection accepted
-Sent: uuid=727290cf-a8ec-467d-809e-01ae19ab8d9b, flag=0
-Received: uuid=727290cf-a8ec-467d-809e-01ae19ab8d9b, flag=0, greater, 0
-Received: uuid=727290cf-a8ec-467d-809e-01ae19ab8d9b, flag=0, same, 0
-Sent: uuid=727290cf-a8ec-467d-809e-01ae19ab8d9b, flag=0
-Leader is decided to 727290cf-a8ec-467d-809e-01ae19ab8d9b
-Sent: uuid=727290cf-a8ec-467d-809e-01ae19ab8d9b, flag=1
-Received: uuid=727290cf-a8ec-467d-809e-01ae19ab8d9b, flag=1, greater, 0
-Leader is 727290cf-a8ec-467d-809e-01ae19ab8d9b
-Sent: uuid=727290cf-a8ec-467d-809e-01ae19ab8d9b, flag=1
-Received: uuid=727290cf-a8ec-467d-809e-01ae19ab8d9b, flag=1, same, 1
-Leader is 727290cf-a8ec-467d-809e-01ae19ab8d9b
+INFO:root:Sent: uuid=18afb442-730b-4826-bfbf-fe0c1ffb125d, flag=0
+INFO:root:Received: uuid=ee8f28ad-3787-4a41-95e0-9fd3fa24a3a5, flag=0, greater, Not Leader
+INFO:root:Received: uuid=ee8f28ad-3787-4a41-95e0-9fd3fa24a3a5, flag=1, , Leader Elected

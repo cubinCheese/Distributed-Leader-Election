@@ -217,8 +217,11 @@ class NodeState:
 
 def main():
 
-    # server() only receives message and updates shared message state
-    # client() only sends message based on shared message state
+    # rewrite new log.txt file on each process run
+    logging.basicConfig(filename='log.txt', level=logging.INFO, filemode='w')
+
+    # server() only receives message and updates shared message state (but now also sends followup leader related messages)
+    # client() only sends initial message to initaite leader election, and establishes first connection
     
     server_ip, server_port, client_ip, client_port = read_config_file()
     print(f"Server IP: {server_ip}, Server Port: {server_port}") # this is us
@@ -226,18 +229,12 @@ def main():
 
     sharedState = NodeState()
 
-    # Initialize the first message with local node's UUID and flag=0
-    #sharedState.current_message = Message(received_uuid=sharedState.local_node_uuid, flag=0)
-
     # Start server and client threads for Node 1, Node 2, and Node 3
     server_thread = threading.Thread(target=sharedState.server, args=(server_ip, server_port))
     client_thread = threading.Thread(target=sharedState.client, args=(client_ip, client_port))
 
-    #client(client_ip=client_ip, client_port=client_port, sharedState=sharedState)
-
     # Start the threads
     server_thread.start()
-    #sharedState.server_ready_event.wait()  # Wait until the server is ready with a message
     input()
     client_thread.start()
 
