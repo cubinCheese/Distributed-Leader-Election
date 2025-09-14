@@ -19,3 +19,9 @@ Currently
     - triggers client to close connection
     - sends to server, triggering server to close connection too
 
+
+Server1 talks to Client1, client1 transmits to clientN...
+#
+# server runs (process 1) --> server runs (process 2 on other terminal) --> input() on first terminal --> input on second terminal 
+
+# recall: server thread is supposed to handle logic for leader election.

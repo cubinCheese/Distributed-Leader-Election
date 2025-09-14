@@ -40,8 +40,8 @@ def main():
 
         # send something
         ##sentence = "this message was encoded" 
-        #sentence = input("Input lowercase Sentence as message (use): ")
-        sentence = node_uuid
+        sentence = input("Input lowercase Sentence as message (use): ")
+        #sentence = node_uuid
         
         clientSocket.send(sentence.encode())
 

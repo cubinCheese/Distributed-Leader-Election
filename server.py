@@ -33,12 +33,14 @@ def main():
 
     while True:
         sentence = connectionSocket.recv(1024).decode()
-        #capSentence = sentence.upper() + " -signed by server"
-        #connectionSocket.send(capSentence.encode())
+        capSentence = sentence.upper() + " -signed by server"
+        connectionSocket.send(capSentence.encode())
 
         # accept client connection + client uuid
         # check if uuid is larger than our (own node uuid): 
         # note.. check what to reply with in (wiki) of algorithm
+        
+        '''
         if sentence == node_uuid: # if same uuid has returned via message, leader elected
             print("Leader Elected: ", sentence) # change "sentence" to uuid in message
             connectionSocket.close()
@@ -55,6 +57,5 @@ def main():
             print("terminating server connection...")
             connectionSocket.close()
             break
-        '''
 
 main()
