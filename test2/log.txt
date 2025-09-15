@@ -1,4 +1,0 @@
-INFO:root:Received: uuid=18afb442-730b-4826-bfbf-fe0c1ffb125d, flag=0, less, Not Leader
-INFO:root:Sent: uuid=ee8f28ad-3787-4a41-95e0-9fd3fa24a3a5, flag=0
-INFO:root:Leader is decided to ee8f28ad-3787-4a41-95e0-9fd3fa24a3a5
-INFO:root:Leader is decided to ee8f28ad-3787-4a41-95e0-9fd3fa24a3a5

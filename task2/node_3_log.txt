@@ -1,0 +1,3 @@
+INFO:root:Received: uuid=5fd9261d-448d-47d6-aa60-78f45fcc041f, flag=0, less, Not Leader
+INFO:root:Leader is decided to 96e1fef4-6fee-4e54-aa6a-f64a21c965d9
+INFO:root:Received: uuid=68df64ba-f206-427e-b57e-21ecad8444e3, flag=0, less, Not Leader

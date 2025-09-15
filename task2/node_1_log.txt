@@ -1,0 +1,5 @@
+INFO:root:Received: uuid=fd53a387-db9d-4c4d-a205-387ae4399c9c, flag=1, , Leader Elected
+INFO:root:Leader is decided to 5fd9261d-448d-47d6-aa60-78f45fcc041f
+INFO:root:Sent: uuid=5fd9261d-448d-47d6-aa60-78f45fcc041f, flag=0
+INFO:root:Received: uuid=fafec521-38a9-4cd2-ac2a-8261ce2ed006, flag=0, greater, Not Leader
+INFO:root:Sent: uuid=9eb0e8dc-2cf0-43a7-b578-22b9c34d8f19, flag=0

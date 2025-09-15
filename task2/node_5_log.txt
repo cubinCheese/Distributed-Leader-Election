@@ -1,0 +1,6 @@
+INFO:root:Received: uuid=dec21f2e-2e82-41fb-82c2-b5a5859a4114, flag=0, less, Not Leader
+INFO:root:Leader is decided to facf76f7-ccbd-4447-a58c-22f09ba584ce
+INFO:root:Leader is decided to facf76f7-ccbd-4447-a58c-22f09ba584ce
+INFO:root:Received: uuid=5fd9261d-448d-47d6-aa60-78f45fcc041f, flag=0, less, Not Leader
+INFO:root:Received: uuid=68df64ba-f206-427e-b57e-21ecad8444e3, flag=0, less, Not Leader
+INFO:root:Received: uuid=96e1fef4-6fee-4e54-aa6a-f64a21c965d9, flag=0, less, Not Leader

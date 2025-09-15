@@ -1,4 +1,4 @@
-INFO:root:Sent: uuid=aa6bc5b2-d6ed-4aec-9b53-17915f5c7a75, flag=0
-INFO:root:Received: uuid=8dd8f966-c637-4bc3-8bce-3dc72dda0dfa, flag=0, less, Not Leader
-INFO:root:Leader is decided to aa6bc5b2-d6ed-4aec-9b53-17915f5c7a75
-INFO:root:Leader is decided to aa6bc5b2-d6ed-4aec-9b53-17915f5c7a75
+INFO:root:Sent: uuid=cd109813-d6cc-4ee4-98fd-56b75c8c9691, flag=0
+INFO:root:Received: uuid=93fd9e9a-85af-4c54-9692-799cae8b7192, flag=0, less, Not Leader
+INFO:root:Leader is decided to cd109813-d6cc-4ee4-98fd-56b75c8c9691
+INFO:root:Leader is decided to cd109813-d6cc-4ee4-98fd-56b75c8c9691
