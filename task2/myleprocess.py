@@ -292,7 +292,7 @@ def main():
     # Only start the client thread if node type is 'x' or 'n'
     if args.node_type == 'x' or args.node_type == 'n':
         input("Only Press [Enter] on ONE of the nodes to start election process..")
-        client_thread = threading.Thread(target=sharedState.client, args=(client_ip, client_port, args.node_type == 'x'))
+        client_thread = threading.Thread(target=sharedState.client, args=(args.node_type == 'x',))
         client_thread.start()
         client_thread.join()  # Wait for client thread to finish
         

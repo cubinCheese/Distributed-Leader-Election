@@ -65,11 +65,11 @@ def read_config_file():
     with open("config.txt", "r") as file:
         lines = file.readlines()
 
-        # Assigned second line as server
-        server_ip, server_port = lines[1].strip().split(",")
+        # Assigned first line as server
+        server_ip, server_port = lines[0].strip().split(",")
 
-        # Client is assigned as first line
-        client_ip, client_port = lines[0].strip().split(",")
+        # Client is assigned as second line
+        client_ip, client_port = lines[1].strip().split(",")
 
         return server_ip, int(server_port), client_ip, int(client_port)
 
