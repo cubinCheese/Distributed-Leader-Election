@@ -72,6 +72,7 @@ class Message:
 
 
 # function to read config.txt to retrieve (server & client) IP and PORT numbers
+# first line - my self (listening on port), second / third line - peers to connect to
 def read_config_file(node_number):
     filename = f"config{node_number}.txt"
     with open(filename, "r") as file:
@@ -164,7 +165,7 @@ class NodeState:
         with self.lock:
             # case: we are the leader - UUID has returned back to us
             if message.flag == 0:
-                if message.received_uuid == self.local_node_uuid:
+                if message.received_uuid == self.local_node_uuid: # leader election only happens if this occurs twice.
                     # None -> leader uuid initalized
                     log_message("Leader", message, "equal", "", self.local_node_uuid)
                     self.leader_uuid = self.local_node_uuid # we are the leader
@@ -203,13 +204,11 @@ class NodeState:
     # MODIFIED FOR TASK2 - Accomdating multiple connections
     # functions as transmitter for the (client, server) node
     # it passes along whatever the server logic decided was the msg
-    def client(self, client_ip, client_port, is_x_node=False):
+    def client(self, is_x_node=False):
 
         # UNMODIFIED original client() implementation from task1
         # function that handles one client connection
         def core_client_logic(ip, port):
-            print(f"I am the Client---------- This is my ID: {self.local_node_uuid}")
-            print(f"Node {self.local_node_uuid} is the Client. Connecting to {client_ip}:{client_port}")
             self.clientSocket = socket(AF_INET, SOCK_STREAM)
             time.sleep(5)
             connectionEstablished = False
@@ -228,8 +227,11 @@ class NodeState:
 
         # 'x' node has two connections to make - spawns two threads to handle
         if is_x_node:
+            print(self.peers, "this is peers list")
             threads = []
             for (ip, port) in self.peers:
+                print(f"I am the Client---------- This is my ID: {self.local_node_uuid}")
+                print(f"Node {self.local_node_uuid} is the Client. Connecting to {ip}:{port}")
                 t = threading.Thread(target=core_client_logic, args=(ip, port))
                 t.start()
                 threads.append(t)
@@ -237,6 +239,8 @@ class NodeState:
                 t.join()
         # otherwise we just stick to original client logic - single connection
         else:
+            client_ip = peers[0]
+            client_port = peers[1]
             core_client_logic(client_ip, client_port)
 
     # will not modify -- because we'd have to call close() which erases persistent
