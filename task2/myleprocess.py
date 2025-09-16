@@ -78,26 +78,28 @@ def read_config_file(node_number):
     with open(filename, "r") as file:
         lines = file.readlines()
 
-        # Assigned second line as server
-        server_ip, server_port = lines[1].strip().split(",")
+        # Assigned first line as server
+        server_ip, server_port = lines[0].strip().split(",")
 
-        # Client is assigned as first line
-        client_ip, client_port = lines[0].strip().split(",")
+        # Client is assigned as second line
+        client_ip, client_port = lines[1].strip().split(",")
 
+        # If there's a third line, it's an additional peer (for 'x' node)
         if len(lines) > 2:
             peer_client_ip, peer_client_port = lines[2].strip().split(",")
             return server_ip, int(server_port), client_ip, int(client_port), peer_client_ip, int(peer_client_port)
-        else:
-            return server_ip, int(server_port), client_ip, int(client_port)
+        
+        # otherwise, we just return the standard two lines (for 'n' and 'y' nodes)
+        return server_ip, int(server_port), client_ip, int(client_port)
 def old_read_config_file():
     with open("config.txt", "r") as file:
         lines = file.readlines()
 
-        # Assigned second line as server
-        server_ip, server_port = lines[1].strip().split(",")
+        # Assigned first line as server
+        server_ip, server_port = lines[0].strip().split(",")
 
-        # Client is assigned as first line
-        client_ip, client_port = lines[0].strip().split(",")
+        # Client is assigned as second line
+        client_ip, client_port = lines[1].strip().split(",")
 
         return server_ip, int(server_port), client_ip, int(client_port)
 
