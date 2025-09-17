@@ -114,6 +114,10 @@ class NodeState:
         self.leader_uuid = None             # elected leader uuid
         self.leader_flag = False            # election flag
 
+        self.seen_own_uuid_count = 0        # number of times we've seen our own UUID
+        # this is important because in a double ring, the outer ring's UUID will return to itself
+        # before the inner ring can send its own UUID up to the outer ring node. (hence a lower UUID can beat a higher UUID due to delay)
+
         # this here is deprecated -- we now support multiple connections
         # client needs to make first connection
         # server needs to send subsequent messages to that socket
@@ -175,11 +179,17 @@ class NodeState:
             # case: we are the leader - UUID has returned back to us
             if message.flag == 0:
                 if message.received_uuid == self.local_node_uuid: # leader election only happens if this occurs twice.
-                    # None -> leader uuid initalized
-                    log_message("Leader", message, "equal", "", self.local_node_uuid)
-                    self.leader_uuid = self.local_node_uuid # we are the leader
-                    self.leader_flag = True
-                    self.send_node_message(Message(message.received_uuid, flag=1), destination_clientSocket)     # send updated message
+                    self.seen_own_uuid_count += 1
+                    if self.seen_own_uuid_count < 2:
+                        # None -> leader uuid initalized
+                        log_message("Leader", message, "equal", "", self.local_node_uuid)
+                        self.leader_uuid = self.local_node_uuid # we are the leader
+                        self.leader_flag = True
+                        self.send_node_message(Message(message.received_uuid, flag=1), destination_clientSocket)     # send updated message
+                    else:
+                        # we've seen our own UUID twice, ignore subsequent messages
+                        log_message("Forwarded", message, "", "")
+                        return  # ignore subsequent messages with our own UUID
 
                 # case: our node uuid < received uuid
                 # just pass message along (we're not the leader)
@@ -233,6 +243,19 @@ class NodeState:
             message = Message(received_uuid=self.local_node_uuid, flag=0)
             self.send_node_message(message, curr_clientSocket)
             log_message("Sent", message, "", "")
+
+            # Persistent loop for 'x' node to connect to both peers
+            while True:
+                data = curr_clientSocket.recv(1024).decode()
+                if not data:
+                    break
+                for msg_str in data.strip().split('\n'):
+                    if msg_str:
+                        message = Message.json_to_msg(msg_str)
+                        print(f"[Client Node {self.local_node_uuid}] Received message: uuid={message.received_uuid}, flag={message.flag}")
+                        self.leader_election_logic(message, curr_clientSocket)
+            curr_clientSocket.close()
+
 
         # 'x' node has two connections to make - spawns two threads to handle
         if is_x_node:
