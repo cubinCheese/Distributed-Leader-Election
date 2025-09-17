@@ -159,6 +159,11 @@ class NodeState:
                         message = Message.json_to_msg(data=msg_str)
                         print(f"[Node {self.local_node_uuid}] Received message: uuid={message.received_uuid}, flag={message.flag}")
                         self.leader_election_logic(message, connectionSocket) # call leader election process
+
+                        # If leader is elected, close connection and break
+                        if self.leader_flag:
+                            connectionSocket.close()
+                            return
             connectionSocket.close()
 
         while True:
@@ -240,9 +245,10 @@ class NodeState:
                     time.sleep(1)
 
             # After successfully connecting to a peer, send message
-            message = Message(received_uuid=self.local_node_uuid, flag=0)
-            self.send_node_message(message, curr_clientSocket)
-            log_message("Sent", message, "", "")
+            if is_x_node:
+                message = Message(received_uuid=self.local_node_uuid, flag=0)
+                self.send_node_message(message, curr_clientSocket)
+                log_message("Sent", message, "", "")
 
             # Persistent loop for 'x' node to connect to both peers
             while True:
@@ -254,6 +260,10 @@ class NodeState:
                         message = Message.json_to_msg(msg_str)
                         print(f"[Client Node {self.local_node_uuid}] Received message: uuid={message.received_uuid}, flag={message.flag}")
                         self.leader_election_logic(message, curr_clientSocket)
+                        # If leader is elected, close connection and break
+                        if self.leader_flag:
+                            curr_clientSocket.close()
+                            return
             curr_clientSocket.close()
 
 
@@ -324,12 +334,29 @@ def main():
     server_thread = threading.Thread(target=sharedState.server, args=(server_ip, server_port))
     server_thread.start()
 
+    # In main(), after starting server_thread:
+    
+    
+    if args.node_number == 1 and args.node_type == 'x':
+        # Only x1 initiates the election
+        client_thread = threading.Thread(target=sharedState.client, args=(True,))
+        client_thread.start()
+        client_thread.join()
+    else:
+        # Other nodes: client thread connects but does NOT send their own UUID
+        client_thread = threading.Thread(target=sharedState.client, args=(False,))
+        client_thread.start()
+        client_thread.join()
+    
+    '''
     # Only certain node types initiate the client (to start the election)
     if args.node_type in ['x', 'n', 'y']:
-        input("\n[Press Enter to start the leader election on this node...]\n")
+        #input("\n[Press Enter to start the leader election on this node...]\n")
+        time.sleep(30)  # Give server a moment to start
         client_thread = threading.Thread(target=sharedState.client, args=(args.node_type == 'x',))
         client_thread.start()
-        client_thread.join()  # Wait for the client to finish sending
+        client_thread.join()  # Wait for the client to finish sendin
+    '''
 
     # Wait for server thread (keeps running)
     server_thread.join()

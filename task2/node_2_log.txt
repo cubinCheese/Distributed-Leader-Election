@@ -24,3 +24,32 @@ INFO:root:Leader is decided to 60393094-cbc8-4d6c-ba24-28d7d941b923
 INFO:root:Received: uuid=1c654d02-648d-4432-8454-f371cddf1440, flag=0, less, Not Leader
 INFO:root:Leader is decided to a5415411-9d7d-405c-ad65-1bb17fdd070d
 INFO:root:Leader is decided to a5415411-9d7d-405c-ad65-1bb17fdd070d
+INFO:root:Received: uuid=2059145e-59da-4c43-92b2-758fa65a196e, flag=0, less, Not Leader
+INFO:root:Leader is decided to 544f7427-5350-43d2-a2f0-454b591b4f8f
+INFO:root:Leader is decided to 544f7427-5350-43d2-a2f0-454b591b4f8f
+INFO:root:Sent: uuid=544f7427-5350-43d2-a2f0-454b591b4f8f, flag=0
+INFO:root:Received: uuid=57b2b00c-8314-43e4-b482-dc38d37d0a07, flag=0, greater, Not Leader
+INFO:root:Received: uuid=57b2b00c-8314-43e4-b482-dc38d37d0a07, flag=1, , Leader Elected
+INFO:root:Received: uuid=e6767755-47cb-4474-bfb3-f4ec34873c24, flag=0, greater, Not Leader
+INFO:root:Sent: uuid=9a3f78d3-c1cd-4086-b966-f40e22254f0b, flag=0
+INFO:root:Leader is decided to 9a3f78d3-c1cd-4086-b966-f40e22254f0b
+INFO:root:Leader is decided to 9a3f78d3-c1cd-4086-b966-f40e22254f0b
+INFO:root:Received: uuid=bae717aa-4e86-4620-89be-2c8174220af1, flag=0, greater, Not Leader
+INFO:root:Received: uuid=bae717aa-4e86-4620-89be-2c8174220af1, flag=1, , Leader Elected
+INFO:root:Sent: uuid=53e5fd6a-cc3c-48e3-baf0-89c1d1653cb8, flag=0
+INFO:root:Received: uuid=a498df75-c2b7-4f15-a919-5ec712196aae, flag=0, greater, Not Leader
+INFO:root:Received: uuid=a498df75-c2b7-4f15-a919-5ec712196aae, flag=1, , Leader Elected
+INFO:root:Received: uuid=95bb3565-ce18-4495-89bc-3b1308e8b382, flag=0, greater, Not Leader
+INFO:root:Received: uuid=95bb3565-ce18-4495-89bc-3b1308e8b382, flag=1, , Leader Elected
+INFO:root:Received: uuid=2dc28085-0766-4309-a5b1-8bb98e759285, flag=0, less, Not Leader
+INFO:root:Leader is decided to 42c8a0bb-f0b4-4364-8b1e-1f4009c65385
+INFO:root:Leader is decided to 42c8a0bb-f0b4-4364-8b1e-1f4009c65385
+INFO:root:Sent: uuid=42c8a0bb-f0b4-4364-8b1e-1f4009c65385, flag=0
+INFO:root:Received: uuid=9e1365e3-e13c-4ca4-8d58-95ca79101890, flag=0, greater, Not Leader
+INFO:root:Received: uuid=9e1365e3-e13c-4ca4-8d58-95ca79101890, flag=1, , Leader Elected
+INFO:root:Received: uuid=07f7e365-7cd5-4bde-842f-d4f38279504a, flag=0, less, Not Leader
+INFO:root:Leader is decided to a85fa45d-e190-4548-854b-52e378e9be7d
+INFO:root:Sent: uuid=a85fa45d-e190-4548-854b-52e378e9be7d, flag=0
+INFO:root:Received: uuid=4c02d9ee-d247-4ecf-b383-ede61eb9be27, flag=0, less, Not Leader
+INFO:root:Leader is decided to bff37a8c-cd07-45a0-8b54-4240ccaa317d
+INFO:root:Received: uuid=3353e8bd-ed26-4fe1-9f20-a9b462b56a69, flag=0, less, Not Leader
