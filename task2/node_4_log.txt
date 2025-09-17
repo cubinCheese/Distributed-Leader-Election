@@ -1,2 +1,5 @@
 INFO:root:Received: uuid=5fd9261d-448d-47d6-aa60-78f45fcc041f, flag=0, less, Not Leader
 INFO:root:Received: uuid=96e1fef4-6fee-4e54-aa6a-f64a21c965d9, flag=0, greater, Not Leader
+INFO:root:Sent: uuid=1aaeec2c-9971-4465-b269-0b0202f7a409, flag=0
+INFO:root:Received: uuid=468626ad-b582-4a8e-b891-a5d76e7e8f09, flag=0, less, Not Leader
+INFO:root:Sent: uuid=d05afc7c-cf87-49f4-a520-69e264bf3a5e, flag=0

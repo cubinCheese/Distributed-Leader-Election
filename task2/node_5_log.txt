@@ -4,3 +4,6 @@ INFO:root:Leader is decided to facf76f7-ccbd-4447-a58c-22f09ba584ce
 INFO:root:Received: uuid=5fd9261d-448d-47d6-aa60-78f45fcc041f, flag=0, less, Not Leader
 INFO:root:Received: uuid=68df64ba-f206-427e-b57e-21ecad8444e3, flag=0, less, Not Leader
 INFO:root:Received: uuid=96e1fef4-6fee-4e54-aa6a-f64a21c965d9, flag=0, less, Not Leader
+INFO:root:Received: uuid=ea68ae61-4a12-47c2-a74e-7b5b1c4b0892, flag=0, greater, Not Leader
+INFO:root:Received: uuid=d05afc7c-cf87-49f4-a520-69e264bf3a5e, flag=0, greater, Not Leader
+INFO:root:Sent: uuid=c4138f1d-b2af-4bdc-a13e-053834ba7b5b, flag=0

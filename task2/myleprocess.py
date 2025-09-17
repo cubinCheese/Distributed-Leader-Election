@@ -114,9 +114,10 @@ class NodeState:
         self.leader_uuid = None             # elected leader uuid
         self.leader_flag = False            # election flag
 
+        # this here is deprecated -- we now support multiple connections
         # client needs to make first connection
         # server needs to send subsequent messages to that socket
-        self.clientSocket = None  # client socket needs to be accessible to both functions since
+        #self.clientSocket = None  # client socket needs to be accessible to both functions since
 
         # add list of peer nodes - for client connection
         self.peers = [] # list of (ip, port) tuples for peer nodes
@@ -140,17 +141,20 @@ class NodeState:
             
         # function to handle each client connection in a separate thread
         # separated out our original server logic to handle each connection
-        def handle_client_connection(connectionSocket):
+        def handle_client_connection(connectionSocket): # reads in current connection socket
             while True:
+                print("Waiting to receive data...")
                 # receive message from incoming connection
                 sentence = connectionSocket.recv(1024).decode()
+                print(f"Raw received: {sentence}")
                 if not sentence:
                     break  # no empty strings
                 # convert to message object - split by newline to handle stream of messages
                 for msg_str in sentence.strip().split('\n'):
                     if msg_str:
                         message = Message.json_to_msg(data=msg_str)
-                        self.leader_election_logic(message) # call leader election process
+                        print(f"[Node {self.local_node_uuid}] Received message: uuid={message.received_uuid}, flag={message.flag}")
+                        self.leader_election_logic(message, connectionSocket) # call leader election process
             connectionSocket.close()
 
         while True:
@@ -162,7 +166,10 @@ class NodeState:
 
     # function that handles the leader election logic
     # based on the message received, it decides whether to forward, modify, or stop forwarding
-    def leader_election_logic(self, message: Message):
+    def leader_election_logic(self, message: Message, destination_clientSocket=None):
+        if destination_clientSocket is None:
+            print("Error: destination_clientSocket is None in leader_election_logic")
+            return
         # prevent race condition - due to multiple server() threads
         with self.lock:
             # case: we are the leader - UUID has returned back to us
@@ -172,14 +179,14 @@ class NodeState:
                     log_message("Leader", message, "equal", "", self.local_node_uuid)
                     self.leader_uuid = self.local_node_uuid # we are the leader
                     self.leader_flag = True
-                    self.send_node_message(Message(message.received_uuid, flag=1))     # send updated message
+                    self.send_node_message(Message(message.received_uuid, flag=1), destination_clientSocket)     # send updated message
 
                 # case: our node uuid < received uuid
                 # just pass message along (we're not the leader)
                 elif self.local_node_uuid < message.received_uuid:
                     #print(f"(unmodified) Forwarding message along: {message.received_uuid}, with leader: {message.flag}")
                     log_message("Received", message, "greater", "Not Leader")
-                    self.send_node_message(message)     # send unmodified message
+                    self.send_node_message(message, destination_clientSocket)     # send unmodified message
 
                 # case: our node uuid > received uuid
                 # we are a better candidate for leader, modify message
@@ -187,7 +194,7 @@ class NodeState:
                     #print(f"Modifying message to our uuid: {self.local_node_uuid}, with leader: 0")
                     log_message("Received", message, "less", "Not Leader")
                     self.leader_flag = False
-                    self.send_node_message(Message(received_uuid=self.local_node_uuid, flag=0))     # send updated message
+                    self.send_node_message(Message(received_uuid=self.local_node_uuid, flag=0), destination_clientSocket)     # send updated message
 
             # we just received the final Leader Message that was broadcasted
             elif message.flag == 1:
@@ -200,7 +207,7 @@ class NodeState:
                 else:
                     #print(f"Forwarding leader message along: {message.received_uuid}, with leader: {message.flag}")
                     log_message("Received", message, "", "Leader Elected")
-                    self.send_node_message(message)     # send unmodified message
+                    self.send_node_message(message, destination_clientSocket)     # send unmodified message
     
 
     # MODIFIED FOR TASK2 - Accomdating multiple connections
@@ -211,12 +218,12 @@ class NodeState:
         # UNMODIFIED original client() implementation from task1
         # function that handles one client connection
         def core_client_logic(ip, port):
-            self.clientSocket = socket(AF_INET, SOCK_STREAM)
+            curr_clientSocket = socket(AF_INET, SOCK_STREAM)
             time.sleep(5)
             connectionEstablished = False
             while not connectionEstablished:
                 try:
-                    self.clientSocket.connect((ip, port))
+                    curr_clientSocket.connect((ip, port))
                     connectionEstablished = True
                 except ConnectionRefusedError:
                     print(f"Connection refused, retrying... {ip}:{port}")
@@ -224,7 +231,7 @@ class NodeState:
 
             # After successfully connecting to a peer, send message
             message = Message(received_uuid=self.local_node_uuid, flag=0)
-            self.send_node_message(message)
+            self.send_node_message(message, curr_clientSocket)
             log_message("Sent", message, "", "")
 
         # 'x' node has two connections to make - spawns two threads to handle
@@ -241,17 +248,16 @@ class NodeState:
                 t.join()
         # otherwise we just stick to original client logic - single connection
         else:
-            client_ip = peers[0]
-            client_port = peers[1]
+            client_ip, client_port = self.peers[0]
             core_client_logic(client_ip, client_port)
 
     # will not modify -- because we'd have to call close() which erases persistent
     # Helper function to send messages
     # Initalize first message in chain of election process (start of node chain)
     # Send subsequent messages in chain of election process
-    def send_node_message(self, message: Message):
+    def send_node_message(self, message: Message, current_Socket=None):
         try:
-            self.clientSocket.sendall(message.msg_to_json().encode()) # sendall is more reliable
+            current_Socket.sendall(message.msg_to_json().encode()) # sendall is more reliable
         except Exception as e:
             log_message("ClientSocket send error:", message, "", "", e)
     # server() also needs access to clientSocket to send messages
@@ -277,28 +283,32 @@ def main():
     elif len(config_values) == 6:
         server_ip, server_port, client_ip, client_port, additional_client_ip, additional_client_port = config_values
 
-    print(f"Server IP: {server_ip}, Server Port: {server_port}")
-    print(f"Client IP: {client_ip}, Client Port: {client_port}")
+    print(f"Node {args.node_number} ({args.node_type}) Configuration:")
+    print(f"  Server IP: {server_ip}, Server Port: {server_port}")
+    print(f"  Client IP: {client_ip}, Client Port: {client_port}")
+    if additional_client_ip:
+        print(f"  Additional Peer IP: {additional_client_ip}, Port: {additional_client_port}")
 
+    # Create shared state for this node
     sharedState = NodeState()
 
-    # Add outgoing peer(s) for this node
+    # Add outgoing peers to the client peer list
     sharedState.add_peer(client_ip, client_port)
-    if args.node_type == 'x' and additional_client_ip:
+    if additional_client_ip:
         sharedState.add_peer(additional_client_ip, additional_client_port)
 
-    # Start the server thread
+    # Start the server thread (always runs)
     server_thread = threading.Thread(target=sharedState.server, args=(server_ip, server_port))
     server_thread.start()
 
-    # Only start the client thread if node type is 'x' or 'n'
-    if args.node_type == 'x' or args.node_type == 'n':
-        input("Only Press [Enter] on ONE of the nodes to start election process..")
+    # Only certain node types initiate the client (to start the election)
+    if args.node_type in ['x', 'n', 'y']:
+        input("\n[Press Enter to start the leader election on this node...]\n")
         client_thread = threading.Thread(target=sharedState.client, args=(args.node_type == 'x',))
         client_thread.start()
-        client_thread.join()  # Wait for client thread to finish
-        
-    # Wait for the server thread to finish
+        client_thread.join()  # Wait for the client to finish sending
+
+    # Wait for server thread (keeps running)
     server_thread.join()
 
 if __name__ == "__main__":
