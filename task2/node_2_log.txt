@@ -1,1 +1,0 @@
-INFO:root:Received: uuid=57a08259-cb7c-41d1-bf42-ecbaf148d6d6, flag=0, greater, Not Leader

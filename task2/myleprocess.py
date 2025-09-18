@@ -185,9 +185,9 @@ class NodeState:
             log_message("Ignored", message, "", "")
             return  # if leader already elected, ignore further messages
         
-        outgoing_socket = self.clientSockets[0] 
+        outgoing_sockets = self.clientSockets if len(self.clientSockets) > 1 else [self.clientSockets[0]]
 
-        if outgoing_socket is None:
+        if not outgoing_sockets or outgoing_sockets[0] is None:
             print("Error: destination_clientSocket is None in leader_election_logic")
             return
         
@@ -203,7 +203,10 @@ class NodeState:
                         log_message("Leader", message, "equal", "", self.local_node_uuid)
                         self.leader_uuid = self.local_node_uuid # we are the leader
                         self.leader_flag = True
-                        self.send_node_message(Message(self.local_node_uuid, flag=1), outgoing_socket)     # send updated message
+
+                        # send multiple
+                        for outgoing_socket in outgoing_sockets:
+                            self.send_node_message(Message(self.local_node_uuid, flag=1), outgoing_socket)     # send updated message
                     elif self.seen_own_uuid_count < 2:
                         # we've seen our own UUID once already, but we can drop it
                         log_message("Incoming UUID == Local UUID: Seen Once Before.Dropping Message", message, "", "")
@@ -214,7 +217,9 @@ class NodeState:
                 elif self.local_node_uuid < message.received_uuid:
                     #print(f"(unmodified) Forwarding message along: {message.received_uuid}, with leader: {message.flag}")
                     log_message("Received", message, "greater", "Not Leader")
-                    self.send_node_message(message, outgoing_socket)     # send unmodified message
+                    
+                    for outgoing_socket in outgoing_sockets:
+                        self.send_node_message(message, outgoing_socket)     # send unmodified message
 
                 # case: our node uuid > received uuid
                 # we are a better candidate for leader, modify message
@@ -222,7 +227,8 @@ class NodeState:
                     #print(f"Modifying message to our uuid: {self.local_node_uuid}, with leader: 0")
                     log_message("Received", message, "less", "Not Leader")
                     self.leader_flag = False
-                    self.send_node_message(Message(received_uuid=self.local_node_uuid, flag=0), outgoing_socket)     # send updated message
+                    for outgoing_socket in outgoing_sockets:
+                        self.send_node_message(Message(received_uuid=self.local_node_uuid, flag=0), outgoing_socket)     # send updated message
 
             # we just received the final Leader Message that was broadcasted
             elif message.flag == 1:
@@ -236,7 +242,8 @@ class NodeState:
                     log_message("Received", message, "", "Leader Elected")
                     self.leader_uuid = message.received_uuid
                     self.leader_flag = True
-                    self.send_node_message(message, outgoing_socket)
+                    for outgoing_socket in outgoing_sockets:
+                        self.send_node_message(message, outgoing_socket)
                     # After forwarding, stop processing further messages
                     return
 
@@ -245,7 +252,41 @@ class NodeState:
     # MODIFIED FOR TASK2 - Accomdating multiple connections
     # functions as transmitter for the (client, server) node
     # it passes along whatever the server logic decided was the msg
-    def client(self, is_x_node=False):
+
+    # same implementation from task1
+    def client_n_y_node(self, client_ip, client_port, send_initial_message=False):
+        self.core_client_logic(client_ip, client_port, send_initial_message)
+    
+    def client_x_node(self, send_initial_message):
+        for ip, port in self.peers:
+            print("current x node ip/port:", ip, port)
+            self.core_client_logic(ip, port, send_initial_message)
+
+    def core_client_logic(self, client_ip, client_port, send_initial_message=False):
+        curr_clientSocket = socket(AF_INET, SOCK_STREAM)
+        time.sleep(5)
+        connectionEstablished = False
+        while not connectionEstablished:
+            try:
+                curr_clientSocket.connect((client_ip, client_port))
+                connectionEstablished = True
+            except ConnectionRefusedError:
+                print("Connection refused, retrying...")
+                time.sleep(1)  # Wait before retrying
+
+        # Store the outgoing socket for later use
+        self.clientSockets.append(curr_clientSocket)
+
+        # Send the initial election message using the outgoing socket
+        if send_initial_message:
+            message = Message(received_uuid=self.local_node_uuid, flag=0)
+            self.send_node_message(message, curr_clientSocket)
+            log_message("Sent", message, "", "")
+        else:
+            print("Not Sending Initial Message...on this node....")
+        
+    # modified client() to handle 'x' node with two connections
+    def deprec_client_x_node(self):
 
         # UNMODIFIED original client() implementation from task1
         # function that handles one client connection
@@ -294,11 +335,16 @@ class NodeState:
             for (ip, port) in self.peers:
                 print(f"I am the Client---------- This is my ID: {self.local_node_uuid}")
                 print(f"Node {self.local_node_uuid} is the Client. Connecting to {ip}:{port}")
+                # process connections for sending messages, one at a time
+                core_client_logic(ip, port)
+                
+            '''
                 t = threading.Thread(target=core_client_logic, args=(ip, port)) # or i can do one after the after.
                 t.start()
                 threads.append(t)
             for t in threads:
                 t.join()
+            '''
         # otherwise we just stick to original client logic - single connection
         else:
             client_ip, client_port = self.peers[0]
@@ -363,9 +409,9 @@ def main():
     #input("\n[Press Enter to start the leader election on this node...]\n")
     if args.node_type == 'x':
         # marked as initiator node (only if it is the x node)
-        client_thread = threading.Thread(target=sharedState.client, args=(True,))
+        client_thread = threading.Thread(target=sharedState.client_x_node, args=(True,))
     else:
-        client_thread = threading.Thread(target=sharedState.client, args=(False,))
+        client_thread = threading.Thread(target=sharedState.client_n_y_node, args=(client_ip, client_port, False))
     client_thread.start()
     client_thread.join()
     
