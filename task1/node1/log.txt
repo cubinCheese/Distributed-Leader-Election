@@ -1,3 +1,3 @@
-INFO:root:Sent: uuid=129ee6db-4380-49f1-b031-595e8499f3a2, flag=0
-INFO:root:Received: uuid=acd95acd-27de-47a7-b400-44fd7743f6dd, flag=0, greater, Not Leader
-INFO:root:Received: uuid=acd95acd-27de-47a7-b400-44fd7743f6dd, flag=1, , Leader Elected
+INFO:root:Sent: uuid=9f600f97-3e1f-4ff7-bd38-98ec19ce1df9, flag=0
+INFO:root:Received: uuid=ddd5fb7b-1281-4801-b91e-199147f2aad5, flag=0, greater, Not Leader
+INFO:root:Received: uuid=ddd5fb7b-1281-4801-b91e-199147f2aad5, flag=1, , Leader Elected

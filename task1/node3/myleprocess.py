@@ -194,6 +194,8 @@ class NodeState:
                 time.sleep(1)  # Wait before retrying
         # process blocked until connection made...
 
+    # sends out first message to trigger election process
+    def trigger_election(self):
         # Initalize first message in chain of election process (start of node chain)
         message = Message(received_uuid=self.local_node_uuid, flag=0)
 
@@ -235,8 +237,11 @@ def main():
 
     # Start the threads
     server_thread.start()
-    input()
     client_thread.start()
+
+    # Wait for user input to trigger the election (only on the initiator node)
+    input("Press [Enter] to initiate the leader election on this node...")
+    sharedState.trigger_election()
 
     # Wait for all threads to finish
     server_thread.join()

@@ -1,8 +1,6 @@
-INFO:root:[2025-09-18 22:44:22] Received: uuid=c9681ddb-f895-4b7b-9e5c-607db24ec8f3, flag=0, greater, Not Leader
-INFO:root:[2025-09-18 22:44:22] Sent: uuid=c9681ddb-f895-4b7b-9e5c-607db24ec8f3, flag=0
-INFO:root:[2025-09-18 22:44:27] Received: uuid=fbf95316-49c9-4269-8e61-79da9202f17d, flag=0, greater, Not Leader
-INFO:root:[2025-09-18 22:44:27] Sent: uuid=fbf95316-49c9-4269-8e61-79da9202f17d, flag=0
-INFO:root:[2025-09-18 22:44:27] Received: uuid=fbf95316-49c9-4269-8e61-79da9202f17d, flag=0, greater, Not Leader
-INFO:root:[2025-09-18 22:44:27] Sent: uuid=fbf95316-49c9-4269-8e61-79da9202f17d, flag=0
-INFO:root:[2025-09-18 22:44:27] Received: uuid=fbf95316-49c9-4269-8e61-79da9202f17d, flag=1, , Leader Elected
-INFO:root:[2025-09-18 22:44:27] Sent: uuid=fbf95316-49c9-4269-8e61-79da9202f17d, flag=1
+INFO:root:[2025-09-19 02:50:52] Received: uuid=c6817845-22a4-4bee-997e-86e9b8311ff2, flag=0, less, Not Leader
+INFO:root:[2025-09-19 02:50:52] Sent: uuid=fc6a376e-8117-4011-aa8b-f5d0c28055a6, flag=0
+INFO:root:[2025-09-19 02:50:52] Received: uuid=de100b2c-41b7-453b-9f08-d0f495df78e7, flag=0, less, Not Leader
+INFO:root:[2025-09-19 02:50:52] Sent: uuid=fc6a376e-8117-4011-aa8b-f5d0c28055a6, flag=0
+INFO:root:[2025-09-19 02:50:52] Leader is decided to fc6a376e-8117-4011-aa8b-f5d0c28055a6
+INFO:root:[2025-09-19 02:50:52] Sent: uuid=fc6a376e-8117-4011-aa8b-f5d0c28055a6, flag=1
