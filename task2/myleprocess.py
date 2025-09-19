@@ -38,19 +38,18 @@ def setup_log_for_node(node_number):
 @param leader_id: UUID of the elected leader (for leader messages)
 '''
 def log_message(message_type, msg, comparison, state, leader_id=None):
-    timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()))
     if message_type == "Received":
         print(f"Received: uuid={msg.received_uuid}, flag={msg.flag}, {comparison}, {state}")
-        logging.info(f"[{timestamp}] Received: uuid={msg.received_uuid}, flag={msg.flag}, {comparison}, {state}")
+        logging.info(f"[Received: uuid={msg.received_uuid}, flag={msg.flag}, {comparison}, {state}")
     elif message_type == "Sent":
         print(f"Sent: uuid={msg.received_uuid}, flag={msg.flag}")
-        logging.info(f"[{timestamp}] Sent: uuid={msg.received_uuid}, flag={msg.flag}")
+        logging.info(f"[Sent: uuid={msg.received_uuid}, flag={msg.flag}")
     elif message_type == "Ignored":
         print(f"Ignored: uuid={msg.received_uuid}")
-        logging.info(f"[{timestamp}] Ignored: uuid={msg.received_uuid}")
+        logging.info(f"[Ignored: uuid={msg.received_uuid}")
     elif message_type == "Leader":
         print(f"Leader is decided to {leader_id}")
-        logging.info(f"[{timestamp}] Leader is decided to {leader_id}")
+        logging.info(f"[Leader is decided to {leader_id}")
 
 
 # message class to hold incoming message data
@@ -167,6 +166,15 @@ class NodeState:
             # spawn a new thread to handle each client connection
             threading.Thread(target=handle_client_connection, args=(connectionSocket,), daemon=True).start()
 
+    # close client sockets when no longer needed
+    def close_client_sockets(self):
+        for sock in self.clientSockets:
+            try:
+                sock.close()
+            except Exception as e:
+                print(f"Error closing client socket: {e}")
+        self.clientSockets = []
+
     # retry logic for leader election when no client socket is available
     def retry_leader_election_logic(self, message, retry_count=0, max_retries=5, delay=1):
         if retry_count < max_retries:
@@ -211,6 +219,10 @@ class NodeState:
                         # send multiple
                         for outgoing_socket in outgoing_sockets:
                             self.send_node_message(Message(self.local_node_uuid, flag=1), outgoing_socket)     # send updated message
+
+                        # election complete, end all socket connections
+                        self.close_client_sockets()
+
                     elif self.seen_own_uuid_count < 2:
                         # we've seen our own UUID once already, but we can drop it
                         log_message("Incoming UUID == Local UUID: Seen Once Before.Dropping Message", message, "", "")
@@ -241,6 +253,7 @@ class NodeState:
                     self.leader_uuid = message.received_uuid
                     #print("Leader elected:", self.leader_uuid, "flag: ", message.flag)
                     log_message("Leader", message, "", "", self.leader_uuid)
+                    self.close_client_sockets()
                     return  # election complete, stop forwarding
                 else:
                     log_message("Received", message, "", "Leader Elected")
@@ -248,7 +261,9 @@ class NodeState:
                     self.leader_flag = True
                     for outgoing_socket in outgoing_sockets:
                         self.send_node_message(message, outgoing_socket)
+
                     # After forwarding, stop processing further messages
+                    self.close_client_sockets()
                     return
 
     # same implementation from task1
