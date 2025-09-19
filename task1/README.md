@@ -51,6 +51,7 @@ python3 myleprocess.py
 After all nodes are running, **choose ONLY ONE node to act as the initiator**.  
 On that node’s terminal, **press [Enter]** when prompted to start the leader election process.
 
+- **ALWAYS WAIT** for this prompt to appear in all node terminals before starting leader election with [Enter]
 - Only one node should initiate the election per run.
 - Other nodes should remain running and will participate automatically upon receiving messages.
 
