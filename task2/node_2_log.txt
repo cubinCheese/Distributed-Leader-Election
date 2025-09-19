@@ -1,6 +1,4 @@
-INFO:root:[2025-09-19 14:18:22] Received: uuid=140f4ad8-57ca-4724-aeba-7be1fdfd6a45, flag=0, less, Not Leader
-INFO:root:[2025-09-19 14:18:22] Sent: uuid=e079e29f-b51c-4e51-b826-8594e15cbb8f, flag=0
-INFO:root:[2025-09-19 14:18:22] Received: uuid=a51fc4f7-af4e-41f3-9e5b-56407d238728, flag=0, less, Not Leader
-INFO:root:[2025-09-19 14:18:22] Sent: uuid=e079e29f-b51c-4e51-b826-8594e15cbb8f, flag=0
-INFO:root:[2025-09-19 14:18:22] Leader is decided to e079e29f-b51c-4e51-b826-8594e15cbb8f
-INFO:root:[2025-09-19 14:18:22] Sent: uuid=e079e29f-b51c-4e51-b826-8594e15cbb8f, flag=1
+INFO:root:[Received: uuid=6dd5026c-2c96-43bf-bb22-b86d552f6f39, flag=0, less, Not Leader
+INFO:root:[Sent: uuid=d1bdafd6-b54c-4606-8317-deaccc97a211, flag=0
+INFO:root:[Leader is decided to d1bdafd6-b54c-4606-8317-deaccc97a211
+INFO:root:[Sent: uuid=d1bdafd6-b54c-4606-8317-deaccc97a211, flag=1

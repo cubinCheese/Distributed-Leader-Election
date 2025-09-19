@@ -1,6 +1,4 @@
-INFO:root:[2025-09-19 14:18:22] Received: uuid=e079e29f-b51c-4e51-b826-8594e15cbb8f, flag=0, greater, Not Leader
-INFO:root:[2025-09-19 14:18:22] Sent: uuid=e079e29f-b51c-4e51-b826-8594e15cbb8f, flag=0
-INFO:root:[2025-09-19 14:18:22] Received: uuid=e079e29f-b51c-4e51-b826-8594e15cbb8f, flag=0, greater, Not Leader
-INFO:root:[2025-09-19 14:18:22] Sent: uuid=e079e29f-b51c-4e51-b826-8594e15cbb8f, flag=0
-INFO:root:[2025-09-19 14:18:22] Received: uuid=e079e29f-b51c-4e51-b826-8594e15cbb8f, flag=1, , Leader Elected
-INFO:root:[2025-09-19 14:18:22] Sent: uuid=e079e29f-b51c-4e51-b826-8594e15cbb8f, flag=1
+INFO:root:[Received: uuid=d1bdafd6-b54c-4606-8317-deaccc97a211, flag=0, greater, Not Leader
+INFO:root:[Sent: uuid=d1bdafd6-b54c-4606-8317-deaccc97a211, flag=0
+INFO:root:[Received: uuid=d1bdafd6-b54c-4606-8317-deaccc97a211, flag=1, , Leader Elected
+INFO:root:[Sent: uuid=d1bdafd6-b54c-4606-8317-deaccc97a211, flag=1
