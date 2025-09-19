@@ -1,4 +1,5 @@
-INFO:root:Sent: uuid=d5e7354e-159e-4305-a9db-b079c0efeeef, flag=0
-INFO:root:Leader is decided to d5e7354e-159e-4305-a9db-b079c0efeeef
-INFO:root:Sent: uuid=d5e7354e-159e-4305-a9db-b079c0efeeef, flag=1
-INFO:root:Leader is decided to d5e7354e-159e-4305-a9db-b079c0efeeef
+INFO:root:Sent: uuid=52ae13b8-0848-4149-8379-3c674177e848, flag=0
+INFO:root:Received: uuid=900f0bb7-7bfb-4e8d-9b9b-5d0ad8a02d98, flag=0, greater, Not Leader
+INFO:root:Sent: uuid=900f0bb7-7bfb-4e8d-9b9b-5d0ad8a02d98, flag=0
+INFO:root:Received: uuid=900f0bb7-7bfb-4e8d-9b9b-5d0ad8a02d98, flag=1, , Leader Elected
+INFO:root:Sent: uuid=900f0bb7-7bfb-4e8d-9b9b-5d0ad8a02d98, flag=1

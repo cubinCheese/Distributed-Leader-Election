@@ -133,6 +133,10 @@ class NodeState:
                 self.send_node_message(Message(message.received_uuid, flag=1))     # send updated message
                 log_message("Sent", Message(message.received_uuid, flag=1), "", "")
 
+                # election complete, end all socket connections
+                if self.clientSocket:
+                    self.clientSocket.close()
+
             # case: our node uuid < received uuid
             # just pass message along (we're not the leader)
             elif self.local_node_uuid < message.received_uuid:
@@ -155,6 +159,11 @@ class NodeState:
                 self.leader_flag = True
                 self.leader_uuid = message.received_uuid
                 log_message("Leader", message, "", "", self.leader_uuid)
+
+                # close client connection
+                if self.clientSocket:
+                    self.clientSocket.close()
+
                 return  # election complete, stop forwarding
             else:
                 log_message("Received", message, "", "Leader Elected")
