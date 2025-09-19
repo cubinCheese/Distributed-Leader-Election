@@ -1,0 +1,4 @@
+INFO:root:Sent: uuid=d5e7354e-159e-4305-a9db-b079c0efeeef, flag=0
+INFO:root:Leader is decided to d5e7354e-159e-4305-a9db-b079c0efeeef
+INFO:root:Sent: uuid=d5e7354e-159e-4305-a9db-b079c0efeeef, flag=1
+INFO:root:Leader is decided to d5e7354e-159e-4305-a9db-b079c0efeeef

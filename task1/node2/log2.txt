@@ -1,0 +1,4 @@
+INFO:root:Received: uuid=d5e7354e-159e-4305-a9db-b079c0efeeef, flag=0, greater, Not Leader
+INFO:root:Sent: uuid=d5e7354e-159e-4305-a9db-b079c0efeeef, flag=0
+INFO:root:Received: uuid=d5e7354e-159e-4305-a9db-b079c0efeeef, flag=1, , Leader Elected
+INFO:root:Sent: uuid=d5e7354e-159e-4305-a9db-b079c0efeeef, flag=1

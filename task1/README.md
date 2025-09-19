@@ -48,7 +48,7 @@ python3 myleprocess.py
 
 ### 4. Initiate the Election
 
-After all nodes are running, **choose one node to act as the initiator**.  
+After all nodes are running, **choose ONLY ONE node to act as the initiator**.  
 On that node’s terminal, **press [Enter]** when prompted to start the leader election process.
 
 - Only one node should initiate the election per run.
@@ -64,6 +64,32 @@ python3 myleprocess.py 2    # Node 2
 python3 myleprocess.py 3    # Node 3
 ...
 ```
+
+---
+
+## Sample Output Screenshots
+
+Below are screenshots showing example terminal output and log files from a successful leader election run:
+
+### Sample Config Setup File
+<div style="margin-left: 40px;">
+  <img src="screenshots/sample_config_files.gif" width="220" height="120" alt="Config Setup">
+</div>
+
+### Node 1 Terminal Output
+<div style="margin-left: 40px;">
+  <img src="screenshots/sampleoutput_node1.png" width="350" alt="Node 1 Output">
+</div>
+
+### Node 2 Terminal Output
+<div style="margin-left: 40px;">
+  <img src="screenshots/sampleoutput_node2.png" width="400" alt="Node 2 Output">
+</div>
+
+### Node 3 Terminal Output
+<div style="margin-left: 40px;">
+  <img src="screenshots/sampleoutput_node3.png" width="400" alt="Node 3 Output">
+</div>
 
 ---
 

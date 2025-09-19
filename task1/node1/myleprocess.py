@@ -116,14 +116,6 @@ class NodeState:
                 for msg_str in sentence.strip().split('\n'):
                     if msg_str:
                         message = Message.json_to_msg(data=msg_str)
-                        
-                        '''
-                        print("Received:", message.received_uuid, type(message.received_uuid))
-                        print("Local:", self.local_node_uuid, type(self.local_node_uuid))
-                        print("Equal?", message.received_uuid == self.local_node_uuid)
-                        print("Flag:", message.flag, type(message.flag))
-                        '''
-
                         self.leader_election_logic(message) # call leader election process
             connectionSocket.close()
 
@@ -139,6 +131,7 @@ class NodeState:
                 self.leader_uuid = self.local_node_uuid # we are the leader
                 self.leader_flag = True
                 self.send_node_message(Message(message.received_uuid, flag=1))     # send updated message
+                log_message("Sent", Message(message.received_uuid, flag=1), "", "")
 
             # case: our node uuid < received uuid
             # just pass message along (we're not the leader)
@@ -146,27 +139,27 @@ class NodeState:
                 #print(f"(unmodified) Forwarding message along: {message.received_uuid}, with leader: {message.flag}")
                 log_message("Received", message, "greater", "Not Leader")
                 self.send_node_message(message)     # send unmodified message
+                log_message("Sent", message, "", "")
 
             # case: our node uuid > received uuid
             # we are a better candidate for leader, modify message
             else: # message.received_uuid < self.local_node_uuid:
-                #print(f"Modifying message to our uuid: {self.local_node_uuid}, with leader: 0")
                 log_message("Received", message, "less", "Not Leader")
                 self.leader_flag = False
                 self.send_node_message(Message(received_uuid=self.local_node_uuid, flag=0))     # send updated message
+                log_message("Sent", Message(self.local_node_uuid, 0), "", "")
 
         # we just received the final Leader Message that was broadcasted
         elif message.flag == 1:
             if message.received_uuid == self.local_node_uuid:
                 self.leader_flag = True
                 self.leader_uuid = message.received_uuid
-                #print("Leader elected:", self.leader_uuid, "flag: ", message.flag)
                 log_message("Leader", message, "", "", self.leader_uuid)
                 return  # election complete, stop forwarding
             else:
-                #print(f"Forwarding leader message along: {message.received_uuid}, with leader: {message.flag}")
                 log_message("Received", message, "", "Leader Elected")
                 self.send_node_message(message)     # send unmodified message
+                log_message("Sent", message, "", "")
     
 
 
@@ -220,7 +213,7 @@ class NodeState:
 def main():
 
     # rewrite new log.txt file on each process run
-    logging.basicConfig(filename='log.txt', level=logging.INFO, filemode='w')
+    logging.basicConfig(filename='log1.txt', level=logging.INFO, filemode='w')
 
     # server() only receives message and updates shared message state (but now also sends followup leader related messages)
     # client() only sends initial message to initaite leader election, and establishes first connection
