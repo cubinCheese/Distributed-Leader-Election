@@ -38,19 +38,20 @@ def setup_log_for_node(node_number):
 @param leader_id: UUID of the elected leader (for leader messages)
 '''
 def log_message(message_type, msg, comparison, state, leader_id=None):
+    timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()))
     if message_type == "Received":
         print(f"Received: uuid={msg.received_uuid}, flag={msg.flag}, {comparison}, {state}")
-        logging.info(f"Received: uuid={msg.received_uuid}, flag={msg.flag}, {comparison}, {state}")
+        logging.info(f"[{timestamp}] Received: uuid={msg.received_uuid}, flag={msg.flag}, {comparison}, {state}")
     elif message_type == "Sent":
         print(f"Sent: uuid={msg.received_uuid}, flag={msg.flag}")
-        logging.info(f"Sent: uuid={msg.received_uuid}, flag={msg.flag}")
+        logging.info(f"[{timestamp}] Sent: uuid={msg.received_uuid}, flag={msg.flag}")
     elif message_type == "Ignored":
         print(f"Ignored: uuid={msg.received_uuid}")
-        logging.info(f"Ignored: uuid={msg.received_uuid}")
+        logging.info(f"[{timestamp}] Ignored: uuid={msg.received_uuid}")
     elif message_type == "Leader":
         print(f"Leader is decided to {leader_id}")
-        logging.info(f"Leader is decided to {leader_id}")
-    
+        logging.info(f"[{timestamp}] Leader is decided to {leader_id}")
+
 
 # message class to hold incoming message data
 class Message:
@@ -178,12 +179,26 @@ class NodeState:
             # spawn a new thread to handle each client connection
             threading.Thread(target=handle_client_connection, args=(connectionSocket,), daemon=True).start()
 
+    def retry_leader_election_logic(self, message, retry_count=0, max_retries=5, delay=1):
+        if retry_count < max_retries:
+            print(f"No outgoing client socket available, retrying in {delay} second(s)... (Attempt {retry_count+1}/{max_retries})")
+            threading.Timer(delay, self.leader_election_logic, args=(message,)).start()
+        else:
+            print("Error: No outgoing client socket available in leader_election_logic after retries. Message dropped.")
+            log_message("Ignored", message, "", "")
+
+
+
     # function that handles the leader election logic
     # based on the message received, it decides whether to forward, modify, or stop forwarding
     def leader_election_logic(self, message: Message=None):
         if self.leader_flag:
             log_message("Ignored", message, "", "")
             return  # if leader already elected, ignore further messages
+
+        if not self.clientSockets:
+            self.retry_leader_election_logic(message)
+            return
         
         outgoing_sockets = self.clientSockets if len(self.clientSockets) > 1 else [self.clientSockets[0]]
 
@@ -202,6 +217,7 @@ class NodeState:
                         print("Second time seeing own UUID. Declaring self as leader:", self.local_node_uuid)
                         log_message("Leader", message, "equal", "", self.local_node_uuid)
                         self.leader_uuid = self.local_node_uuid # we are the leader
+                        
                         self.leader_flag = True
 
                         # send multiple
@@ -356,6 +372,7 @@ class NodeState:
     # Send subsequent messages in chain of election process
     def send_node_message(self, message: Message, current_Socket=None):
         try:
+            log_message("Sent", message, "", "")
             current_Socket.sendall(message.msg_to_json().encode()) # sendall is more reliable
         except Exception as e:
             log_message("ClientSocket send error:", message, "", "", e)
@@ -409,6 +426,7 @@ def main():
     #input("\n[Press Enter to start the leader election on this node...]\n")
     if args.node_type == 'x':
         # marked as initiator node (only if it is the x node)
+        input("\n[Press Enter to start the leader election on this node...]\n")
         client_thread = threading.Thread(target=sharedState.client_x_node, args=(True,))
     else:
         client_thread = threading.Thread(target=sharedState.client_n_y_node, args=(client_ip, client_port, False))

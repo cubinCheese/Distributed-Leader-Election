@@ -1,0 +1,4 @@
+INFO:root:[2025-09-18 22:44:27] Received: uuid=c9681ddb-f895-4b7b-9e5c-607db24ec8f3, flag=0, less, Not Leader
+INFO:root:[2025-09-18 22:44:27] Sent: uuid=fbf95316-49c9-4269-8e61-79da9202f17d, flag=0
+INFO:root:[2025-09-18 22:44:27] Leader is decided to fbf95316-49c9-4269-8e61-79da9202f17d
+INFO:root:[2025-09-18 22:44:27] Sent: uuid=fbf95316-49c9-4269-8e61-79da9202f17d, flag=1
