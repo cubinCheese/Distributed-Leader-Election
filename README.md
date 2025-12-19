@@ -11,7 +11,7 @@ In distributed computing, **leader election** is the process of designating a si
 2. **Uniqueness**: Exactly one process considers itself as leader.  
 3. **Agreement**: All other processes know who the leader is.  
 
-# Usage Instructions
+# Usage Instructions 🛠️
 ## Task 1: Single Ring Leader Election
 
 **Instructions:**  
